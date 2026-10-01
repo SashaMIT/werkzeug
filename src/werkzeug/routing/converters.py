@@ -234,7 +234,7 @@ class FloatConverter(BaseConverter):
     .. versionchanged:: 3.2
         Non-ASCII digits are not allowed. Values that are too large and overflow
         to ``inf`` are not allowed. ``to_url`` performs validation and does not
-        produce scientific notation.
+        produce scientific notation. A negative value keeps its sign in front.
 
     .. versionchanged:: 0.15
         The ``signed`` parameter was added.
@@ -293,13 +293,17 @@ class FloatConverter(BaseConverter):
         sig, _, exp_str = value_str.partition("e")
         left, _, right = sig.partition(".")
         exp = int(exp_str)
+        sign = ""
+        if left.startswith("-"):
+            sign = "-"
+            left = left[1:]
 
         # A big number. Expand trailing zeros in the integer part.
         if exp > 0:
-            return f"{left}{right}{'0' * (exp - len(right))}.0"
+            return f"{sign}{left}{right}{'0' * (exp - len(right))}.0"
 
         # A small number. Expand leading zeros in the fraction part.
-        return f"0.{'0' * (-exp - len(left))}{left}{right}"
+        return f"{sign}0.{'0' * (-exp - len(left))}{left}{right}"
 
 
 class UUIDConverter(BaseConverter):

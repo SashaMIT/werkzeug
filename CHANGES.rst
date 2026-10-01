@@ -3,6 +3,8 @@
 Version 3.2.0
 -------------
 
+-   Keep the sign in front when a signed float URL is too small for fixed
+    notation. :issue:`3314`
 -   Drop support for Python 3.9 and 3.10. :pr:`3098`
 -   Remove previous deprecated code: :pr:`3099`
 

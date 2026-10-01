@@ -430,6 +430,15 @@ def test_basic_building():
     assert adapter.build("ws", {}, url_scheme="https") == "wss://example.org/ws"
 
 
+def test_signed_float_small_negative():
+    map = r.Map([r.Rule("/<float(signed=True):x>", endpoint="x")])
+    adapter = map.bind("example.org")
+    assert adapter.build("x", {"x": -1e-7}) == "/-0.0000001"
+    assert adapter.match("/-0.0000001") == ("x", {"x": -1e-7})
+    assert adapter.build("x", {"x": 1e-7}) == "/0.0000001"
+    assert adapter.build("x", {"x": -1.25e16}) == "/-12500000000000000.0"
+
+
 def test_long_build():
     long_args = {f"v{x}": x for x in range(10000)}
     map = r.Map(
